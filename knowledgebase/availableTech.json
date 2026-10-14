@@ -1,0 +1,65 @@
+{
+  "client": {
+    "languages": {
+      "javascript": {
+        "name": "JavaScript",
+        "implemented": false
+      },
+      "typescript": {
+        "name": "TypeScript",
+        "implemented": false
+      }
+    },
+    "frameworks": {
+      "react": {
+        "name": "React",
+        "language": "javascript",
+        "implemented": false
+      },
+      "next": {
+        "name": "Next.js",
+        "language": "javascript",
+        "implemented": false
+      }
+    },
+    "modules": {
+      "auth": {
+        "implemented": false
+      }
+    }
+  },
+  "server": {
+    "languages": {
+      "javascript": {
+        "name": "JavaScript",
+        "implemented": true
+      },
+      "go": {
+        "name": "Go",
+        "implemented": false
+      },
+      "java": {
+        "name": "Java",
+        "implemented": false
+      }
+    },
+    "frameworks": {
+      "node": {
+        "name": "Node.js",
+        "language": "javascript",
+        "implemented": true,
+        "apiFrameworks": {
+          "express": {
+            "name": "Express",
+            "implemented": true
+          }
+        }
+      }
+    },
+    "modules": {
+      "auth": {
+        "implemented": false
+      }
+    }
+  }
+}

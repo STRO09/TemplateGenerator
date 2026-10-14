@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Template Generator</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+
+  <body>
+    <nav class="site-nav">
+      <p class="site-nav__title">Template Generator</p>
+    </nav>
+
+    <main class="workspace">
+      <!-- =========================
+         LANGUAGE COLUMN
+    ========================= -->
+      <aside class="lang-selection">
+        <div class="lang-selection__stage">
+          <!-- decorative glow layer (painted underneath) -->
+          <div class="glow" id="glowText" aria-hidden="true">Java</div>
+
+          <!-- the real, readable text -->
+          <div class="glitch" id="glitchText" data-text="Java">Java</div>
+        </div>
+
+        <!-- ---------- language dropdown ---------- -->
+        <div class="language-picker" id="languagePicker">
+          <span class="language-picker__label" id="languagePickerLabel">
+            Language / Stack Selection
+          </span>
+
+          <button
+            class="language-picker__trigger"
+            id="languageTrigger"
+            type="button"
+            aria-haspopup="listbox"
+            aria-expanded="false"
+            aria-labelledby="languagePickerLabel languageTriggerValue"
+          >
+            <span class="language-picker__value" id="languageTriggerValue"
+              >Java</span
+            >
+
+            <span class="language-picker__chevron" aria-hidden="true">
+              <i data-lucide="chevron-down"></i>
+            </span>
+          </button>
+
+          <ul
+            class="language-picker__list"
+            id="languageList"
+            role="listbox"
+            aria-labelledby="languagePickerLabel"
+          >
+            <li
+              class="language-picker__option"
+              role="option"
+              tabindex="-1"
+              data-value="Java"
+              data-icon="java"
+              aria-selected="true"
+            >
+              <span class="language-picker__option-icon" aria-hidden="true">
+                <img
+                  src="https://img.icons8.com/?size=100&id=ETDhNONw82Nc&format=png&color=dfbfbf"
+                  alt=""
+                />
+              </span>
+              <span class="language-picker__option-name">Java</span>
+            </li>
+
+            <li
+              class="language-picker__option"
+              role="option"
+              tabindex="-1"
+              data-value="Python"
+              data-icon="python"
+              aria-selected="false"
+            >
+              <span class="language-picker__option-icon" aria-hidden="true">
+                <img src="https://cdn.simpleicons.org/python/dfbfbf" alt="" />
+              </span>
+              <span class="language-picker__option-name">Python</span>
+            </li>
+
+            <li
+              class="language-picker__option"
+              role="option"
+              tabindex="-1"
+              data-value="JavaScript"
+              data-icon="javascript"
+              aria-selected="false"
+            >
+              <span class="language-picker__option-icon" aria-hidden="true">
+                <img
+                  src="https://cdn.simpleicons.org/javascript/dfbfbf"
+                  alt=""
+                />
+              </span>
+              <span class="language-picker__option-name">JavaScript</span>
+            </li>
+
+            <li
+              class="language-picker__option"
+              role="option"
+              tabindex="-1"
+              data-value="TypeScript"
+              data-icon="typescript"
+              aria-selected="false"
+            >
+              <span class="language-picker__option-icon" aria-hidden="true">
+                <img
+                  src="https://cdn.simpleicons.org/typescript/dfbfbf"
+                  alt=""
+                />
+              </span>
+              <span class="language-picker__option-name">TypeScript</span>
+            </li>
+
+            <li
+              class="language-picker__option"
+              role="option"
+              tabindex="-1"
+              data-value="Go"
+              data-icon="go"
+              aria-selected="false"
+            >
+              <span class="language-picker__option-icon" aria-hidden="true">
+                <img src="https://cdn.simpleicons.org/go/dfbfbf" alt="" />
+              </span>
+              <span class="language-picker__option-name">Go</span>
+            </li>
+
+            <li
+              class="language-picker__option"
+              role="option"
+              tabindex="-1"
+              data-value="Rust"
+              data-icon="rust"
+              aria-selected="false"
+            >
+              <span class="language-picker__option-icon" aria-hidden="true">
+                <img src="https://cdn.simpleicons.org/rust/dfbfbf" alt="" />
+              </span>
+              <span class="language-picker__option-name">Rust</span>
+            </li>
+
+            <li
+              class="language-picker__option"
+              role="option"
+              tabindex="-1"
+              data-value="C++"
+              data-icon="cplusplus"
+              aria-selected="false"
+            >
+              <span class="language-picker__option-icon" aria-hidden="true">
+                <img
+                  src="https://cdn.simpleicons.org/cplusplus/dfbfbf"
+                  alt=""
+                />
+              </span>
+              <span class="language-picker__option-name">C++</span>
+            </li>
+
+            <li
+              class="language-picker__option"
+              role="option"
+              tabindex="-1"
+              data-value="C#"
+              data-icon="csharp"
+              aria-selected="false"
+            >
+              <span class="language-picker__option-icon" aria-hidden="true">
+                <img
+                  src="https://img.icons8.com/?size=100&id=55205&format=png&color=dfbfbf"
+                  alt=""
+                />
+              </span>
+              <span class="language-picker__option-name">C#</span>
+            </li>
+          </ul>
+        </div>
+
+        <div style="display: flex; justify-content: center; width: min(100%, 34rem);">
+          <button class="generate-btn" type="button" id="generateBtn">
+            Generate
+          </button>
+        </div>
+      </aside>
+
+      <!-- =========================
+         TECH / FEATURE COLUMN
+    ========================= -->
+      <section class="tech-selection" aria-labelledby="techSelectionTitle">
+        <form
+          class="tech-selection__form"
+          id="techForm"
+          action="#"
+          method="post"
+        >
+          <fieldset class="feature-fieldset">
+            <legend class="feature-fieldset__legend">
+              <span class="feature-fieldset__title" id="techSelectionTitle"
+                >Modules</span
+              >
+              <span class="feature-fieldset__hint"
+                >Pick the pieces you want in the template</span
+              >
+            </legend>
+
+            <div class="feature-grid">
+              <label class="feature-card">
+                <input
+                  class="feature-card__input"
+                  type="checkbox"
+                  name="features"
+                  value="map"
+                />
+                <span class="feature-card__check" aria-hidden="true"
+                  ><i data-lucide="check"></i
+                ></span>
+                <span class="feature-card__icon" aria-hidden="true"
+                  ><i data-lucide="map"></i
+                ></span>
+                <span class="feature-card__name">Map</span>
+              </label>
+
+              <label class="feature-card">
+                <input
+                  class="feature-card__input"
+                  type="checkbox"
+                  name="features"
+                  value="socket"
+                />
+                <span class="feature-card__check" aria-hidden="true"
+                  ><i data-lucide="check"></i
+                ></span>
+                <span class="feature-card__icon" aria-hidden="true"
+                  ><i data-lucide="plug"></i
+                ></span>
+                <span class="feature-card__name">Socket</span>
+              </label>
+
+              <label class="feature-card">
+                <input
+                  class="feature-card__input"
+                  type="checkbox"
+                  name="features"
+                  value="redis"
+                />
+                <span class="feature-card__check" aria-hidden="true"
+                  ><i data-lucide="check"></i
+                ></span>
+                <span class="feature-card__icon" aria-hidden="true"
+                  ><i data-lucide="database"></i
+                ></span>
+                <span class="feature-card__name">Redis</span>
+              </label>
+
+              <label class="feature-card">
+                <input
+                  class="feature-card__input"
+                  type="checkbox"
+                  name="features"
+                  value="email"
+                />
+                <span class="feature-card__check" aria-hidden="true"
+                  ><i data-lucide="check"></i
+                ></span>
+                <span class="feature-card__icon" aria-hidden="true"
+                  ><i data-lucide="mail"></i
+                ></span>
+                <span class="feature-card__name">Email</span>
+              </label>
+
+              <label class="feature-card">
+                <input
+                  class="feature-card__input"
+                  type="checkbox"
+                  name="features"
+                  value="notification"
+                />
+                <span class="feature-card__check" aria-hidden="true"
+                  ><i data-lucide="check"></i
+                ></span>
+                <span class="feature-card__icon" aria-hidden="true"
+                  ><i data-lucide="bell"></i
+                ></span>
+                <span class="feature-card__name">Notification</span>
+              </label>
+
+              <label class="feature-card">
+                <input
+                  class="feature-card__input"
+                  type="checkbox"
+                  name="features"
+                  value="auth"
+                />
+                <span class="feature-card__check" aria-hidden="true"
+                  ><i data-lucide="check"></i
+                ></span>
+                <span class="feature-card__icon" aria-hidden="true"
+                  ><i data-lucide="shield-check"></i
+                ></span>
+                <span class="feature-card__name">Auth</span>
+              </label>
+
+              <label class="feature-card">
+                <input
+                  class="feature-card__input"
+                  type="checkbox"
+                  name="features"
+                  value="cache"
+                />
+                <span class="feature-card__check" aria-hidden="true"
+                  ><i data-lucide="check"></i
+                ></span>
+                <span class="feature-card__icon" aria-hidden="true"
+                  ><i data-lucide="zap"></i
+                ></span>
+                <span class="feature-card__name">Cache</span>
+              </label>
+
+              <label class="feature-card">
+                <input
+                  class="feature-card__input"
+                  type="checkbox"
+                  name="features"
+                  value="queue"
+                />
+                <span class="feature-card__check" aria-hidden="true"
+                  ><i data-lucide="check"></i
+                ></span>
+                <span class="feature-card__icon" aria-hidden="true"
+                  ><i data-lucide="list-ordered"></i
+                ></span>
+                <span class="feature-card__name">Queue</span>
+              </label>
+
+              <label class="feature-card">
+                <input
+                  class="feature-card__input"
+                  type="checkbox"
+                  name="features"
+                  value="search"
+                />
+                <span class="feature-card__check" aria-hidden="true"
+                  ><i data-lucide="check"></i
+                ></span>
+                <span class="feature-card__icon" aria-hidden="true"
+                  ><i data-lucide="search"></i
+                ></span>
+                <span class="feature-card__name">Search</span>
+              </label>
+
+              <label class="feature-card">
+                <input
+                  class="feature-card__input"
+                  type="checkbox"
+                  name="features"
+                  value="storage"
+                />
+                <span class="feature-card__check" aria-hidden="true"
+                  ><i data-lucide="check"></i
+                ></span>
+                <span class="feature-card__icon" aria-hidden="true"
+                  ><i data-lucide="hard-drive"></i
+                ></span>
+                <span class="feature-card__name">Storage</span>
+              </label>
+
+              <label class="feature-card">
+                <input
+                  class="feature-card__input"
+                  type="checkbox"
+                  name="features"
+                  value="payment"
+                />
+                <span class="feature-card__check" aria-hidden="true"
+                  ><i data-lucide="check"></i
+                ></span>
+                <span class="feature-card__icon" aria-hidden="true"
+                  ><i data-lucide="credit-card"></i
+                ></span>
+                <span class="feature-card__name">Payment</span>
+              </label>
+
+              <label class="feature-card">
+                <input
+                  class="feature-card__input"
+                  type="checkbox"
+                  name="features"
+                  value="analytics"
+                />
+                <span class="feature-card__check" aria-hidden="true"
+                  ><i data-lucide="check"></i
+                ></span>
+                <span class="feature-card__icon" aria-hidden="true"
+                  ><i data-lucide="trending-up"></i
+                ></span>
+                <span class="feature-card__name">Analytics</span>
+              </label>
+            </div>
+          </fieldset>
+        </form>
+      </section>
+    </main>
+
+    <footer class="site-footer"></footer>
+
+    <!-- icon library -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    <script>
+      (function () {
+        "use strict";
+
+        /* ---------------------------------------------------
+         ELEMENTS
+      --------------------------------------------------- */
+
+        const glitchElement = document.getElementById("glitchText");
+        const glowElement = document.getElementById("glowText");
+        const stageElement = document.querySelector(".lang-selection__stage");
+
+        const pickerElement = document.getElementById("languagePicker");
+        const triggerElement = document.getElementById("languageTrigger");
+        const valueElement = document.getElementById("languageTriggerValue");
+
+        const listElement = document.getElementById("languageList");
+
+        const optionElements = Array.from(
+          listElement.querySelectorAll(".language-picker__option"),
+        );
+
+        /* ---------------------------------------------------
+         CONSTANTS / STATE
+      --------------------------------------------------- */
+
+        const ICON_BASE = "https://cdn.simpleicons.org/";
+        const ICON_TINT = "dfbfbf";
+
+        let currentLanguage = "Java";
+        let pendingSelection = null;
+        let isGlitching = false;
+
+        /* ---------------------------------------------------
+         DROPDOWN OPEN / CLOSE
+      --------------------------------------------------- */
+
+        function isListOpen() {
+          return pickerElement.classList.contains("is-open");
+        }
+
+        function openList() {
+          pickerElement.classList.add("is-open");
+          triggerElement.setAttribute("aria-expanded", "true");
+        }
+
+        function closeList() {
+          pickerElement.classList.remove("is-open");
+          triggerElement.setAttribute("aria-expanded", "false");
+        }
+
+        triggerElement.addEventListener("click", function (event) {
+          event.stopPropagation();
+          isListOpen() ? closeList() : openList();
+        });
+
+        triggerElement.addEventListener("keydown", function (event) {
+          if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+            event.preventDefault();
+            openList();
+
+            const activeOption =
+              optionElements.find(function (option) {
+                return option.getAttribute("aria-selected") === "true";
+              }) || optionElements[0];
+
+            activeOption.focus();
+          }
+        });
+
+        /* click outside -> close */
+        document.addEventListener("click", function (event) {
+          if (!pickerElement.contains(event.target)) {
+            closeList();
+          }
+        });
+
+        /* escape -> close */
+        document.addEventListener("keydown", function (event) {
+          if (event.key === "Escape" && isListOpen()) {
+            closeList();
+            triggerElement.focus();
+          }
+        });
+
+        /* ---------------------------------------------------
+         OPTION INTERACTION
+      --------------------------------------------------- */
+
+        optionElements.forEach(function (option, index) {
+          option.addEventListener("click", function () {
+            chooseLanguage(option);
+          });
+
+          option.addEventListener("keydown", function (event) {
+            if (event.key === "ArrowDown") {
+              event.preventDefault();
+              optionElements[(index + 1) % optionElements.length].focus();
+            } else if (event.key === "ArrowUp") {
+              event.preventDefault();
+              optionElements[
+                (index - 1 + optionElements.length) % optionElements.length
+              ].focus();
+            } else if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              chooseLanguage(option);
+            } else if (event.key === "Tab") {
+              closeList();
+            }
+          });
+        });
+
+        /* ---------------------------------------------------
+         LANGUAGE CHANGE  ->  GLITCH  ->  SWAP TEXT
+      --------------------------------------------------- */
+
+        function chooseLanguage(option) {
+          closeList();
+          triggerElement.focus();
+
+          const language = option.dataset.value;
+          const icon = option.dataset.icon;
+
+          /* picking the language that is already active cancels
+           any in-flight change and does nothing else */
+          if (language === currentLanguage) {
+            pendingSelection = null;
+            return;
+          }
+
+          pendingSelection = { language: language, icon: icon };
+
+          /* a glitch is already running: the latest pick wins,
+           it will be applied when the animation ends */
+          if (isGlitching) {
+            return;
+          }
+
+          isGlitching = true;
+          document.body.classList.add("glitching");
+
+          glitchElement.addEventListener("animationend", handleGlitchEnd);
+        }
+
+        function handleGlitchEnd(event) {
+          /* the ::before / ::after ghosts fire their own
+           animationend events - ignore those */
+          if (event.pseudoElement) {
+            return;
+          }
+
+          glitchElement.removeEventListener("animationend", handleGlitchEnd);
+
+          if (pendingSelection) {
+            applySelection();
+          }
+
+          document.body.classList.remove("glitching");
+          isGlitching = false;
+        }
+
+        function applySelection() {
+          const language = pendingSelection.language;
+          const icon = pendingSelection.icon;
+
+          pendingSelection = null;
+          currentLanguage = language;
+
+          /* 1. visible text */
+          glitchElement.textContent = language;
+
+          /* 2. text used by ::before / ::after */
+          glitchElement.dataset.text = language;
+
+          /* 3. glow layer */
+          glowElement.textContent = language;
+
+          /* 4. dropdown trigger */
+          valueElement.textContent = language;
+
+          /* 5. dropdown option states */
+          optionElements.forEach(function (option) {
+            option.setAttribute(
+              "aria-selected",
+              String(option.dataset.value === language),
+            );
+          });
+
+          /* 6. keep the display type inside the column */
+          stageElement.style.setProperty(
+            "--lang-chars",
+            String(language.length),
+          );
+        }
+
+        /* ---------------------------------------------------
+         ICONS
+      --------------------------------------------------- */
+
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      })();
+    </script>
+  </body>
+</html>

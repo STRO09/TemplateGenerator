@@ -1,0 +1,117 @@
+<!-- ---------------------- COMPATIBLE FOR JWT STRATEGY WITH BEARER TOKEN TRANSPORT ONLY! ----------------------  -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Razorpay Test</title>
+</head>
+
+<body>
+  <h1>Razorpay Test Payment</h1>
+
+  <button id="checkout-button">
+    Checkout
+  </button>
+
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <script>
+    const checkoutButton =
+      document.getElementById("checkout-button");
+
+    checkoutButton.addEventListener("click", async () => {
+      const response = await fetch(
+        "http://localhost:3000/api/orders/checkout",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization" : "Bearer YOUR_ACCESS_TOKEN"
+          },
+
+          body: JSON.stringify({
+            items: [
+              {
+                productId: "6a75a27ebd57a954314e4b47",
+                quantity: 5,
+              },
+              {
+                productId: "6a86c3a36e94bc3367e44c79",
+                quantity: 2,
+              },
+            ],
+          }),
+        },
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        console.error(result);
+        return;
+      }
+
+      const checkout = result.data;
+
+      const options = {
+        key: "YOUR_RAZORPAY_KEY_ID",
+
+        amount: checkout.total * 100,
+
+        currency: checkout.currency,
+
+        name: "Node.js Starter",
+
+        description: "Test purchase",
+
+        order_id: checkout.razorpayOrderId,
+
+        handler: async function (response) {
+          console.log(
+            "Razorpay payment response:",
+            response,
+          );
+
+          const verifyResponse = await fetch(
+            "http://localhost:3000/api/orders/checkout/verify",
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer YOUR_ACCESS_TOKEN"
+              },
+
+              body: JSON.stringify({
+                orderId: response.razorpay_order_id,
+                paymentId: response.razorpay_payment_id,
+                signature: response.razorpay_signature,
+              }),
+            },
+          );
+
+          const result = await verifyResponse.json();
+
+          console.log(
+            "Payment verification response:",
+            result,
+          );
+        },
+
+        theme: {
+          color: "#3399cc",
+        },
+      };
+
+      const razorpay = new Razorpay(options);
+
+      razorpay.open();
+    });
+  </script>
+</body>
+
+</html>

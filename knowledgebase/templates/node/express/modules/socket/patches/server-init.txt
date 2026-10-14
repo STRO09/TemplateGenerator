@@ -1,0 +1,2 @@
+logger.info("Starting socket server");
+initializeSockets(server);

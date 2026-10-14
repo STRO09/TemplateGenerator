@@ -1,0 +1,49 @@
+{
+  "name": "Express",
+  "modules": {
+    "socket": {
+      "name": "Sockets",
+      "implemented": true,
+      "providers": {
+        "socket.io": {
+          "name": "Socket.IO",
+          "implemented": true,
+          "dependencies": {
+            "npm": {
+              "socket.io": "^4.8.3"
+            }
+          },
+          "patches": [
+            {
+              "file": "src/server.js",
+              "operation": "add-import",
+              "anchor": "// ----imports --------------",
+              "patch": "modules/socket/patches/server-import.txt"
+            },
+            {
+              "file": "src/server.js",
+              "operation": "insert-before-anchor",
+              "anchor": "} catch (err) {",
+              "patch": "modules/socket/patches/server-init.txt"
+            },
+            {
+              "file": "src/config/env.js",
+              "operation": "append-object-property",
+              "object": "env",
+              "patch": "modules/socket/patches/env-property.txt"
+            },
+            {
+              "file": ".env.example",
+              "operation": "append",
+              "patch": "modules/socket/patches/envexample.txt"
+            }
+          ]
+        },
+        "ws": {
+          "name": "ws",
+          "implemented": false
+        }
+      }
+    }
+  }
+}
