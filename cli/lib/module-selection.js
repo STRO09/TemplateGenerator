@@ -91,6 +91,7 @@ function printSelection(moduleDefinition, provider) {
   console.log("");
   console.log(`Module: ${moduleDefinition.name}`);
   console.log(`Provider: ${provider.name}`);
+
   console.log("Dependencies:");
 
   const dependencyManagers = Object.entries(provider.dependencies ?? {});
@@ -107,14 +108,24 @@ function printSelection(moduleDefinition, provider) {
     }
   }
 
-  console.log("Patches:");
+  console.log("File mappings:");
 
-  if (!provider.patches?.length) {
+  if (!provider.files?.length) {
     console.log("  None");
   }
 
-  for (const patch of provider.patches ?? []) {
-    console.log(`  ${patch.operation}: ${patch.file} `);
+  for (const mapping of provider.files ?? []) {
+    console.log(`  ${mapping.from} -> ${mapping.to}`);
+  }
+
+  console.log("Integrations:");
+
+  if (!provider.integrations?.length) {
+    console.log("  None");
+  }
+
+  for (const integration of provider.integrations ?? []) {
+    console.log(`  ${integration.operation}: ${integration.file}`);
   }
 
   console.log("");

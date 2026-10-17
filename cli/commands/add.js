@@ -1,54 +1,120 @@
-// add reads the metadata created by create. It doesn't offer a module that's already recorded in modules.server.
-// For projects created before metadata was introduced, it asks you to identify the stack once and saves it.
-
 import fs from "node:fs";
 import path from "node:path";
 import { askChoice } from "../lib/prompts.js";
 import {
   getStackRoot,
-  loadAvailableTech,
   loadModuleRegistry,
+  resolveInside,
 } from "../lib/paths.js";
 import {
-  createProjectMetadata,
   loadProjectMetadata,
   mergeSelectedModules,
-  saveProjectMetadata,
 } from "../lib/project-metadata.js";
 import { chooseModulesForAdd } from "../lib/module-selection.js";
 import { integrateSelectedModules } from "../lib/module-integration.js";
 
 export async function addCommand() {
-  const targetPath = process.cwd();
+  const projectRoot = process.cwd();
+  const metadataPath = path.join(
+    projectRoot,
+    ".templategen",
+    "project.json",
+  );
 
-  if (!fs.existsSync(path.join(targetPath, "package.json"))) {
+  const metadata = loadProjectMetadata(projectRoot);
+
+  if (!metadata) {
     throw new Error(
-      "No package.json found. Run 'templategen add' from the root of an existing project.",
+      `TemplateGen metadata not found at ${metadataPath}.\n` +
+      "Run 'templategen add' from the root of a TemplateGen project.",
     );
   }
 
-  const knowledge = loadAvailableTech();
+  const targets = [];
 
-  let metadata = loadProjectMetadata(targetPath);
+  for (const type of ["client", "server"]) {
+    const app = metadata[type];
 
-  if (!metadata) {
-    metadata = await identifyExistingProject(targetPath, knowledge);
+    if (app == null) continue;
 
-    // Save the discovered stack even if no module is added.
-    saveProjectMetadata(targetPath, metadata);
+    if (
+      typeof app.directoryName !== "string" ||
+      !app.directoryName.trim()
+    ) {
+      throw new Error(
+        `Invalid ${type} configuration in ${metadataPath}: ` +
+        "directoryName is missing.",
+      );
+    }
+
+    targets.push({ type, app });
   }
 
-  if (!metadata.server?.frameworkKey || !metadata.server?.apiFrameworkKey) {
+  if (targets.length === 0) {
     throw new Error(
-      "Project metadata does not identify a supported server stack. " +
-        "Check .templategen/project.json.",
+      "No client or server app is configured in .templategen/project.json.",
+    );
+  }
+
+  let selectedTarget;
+
+  if (targets.length === 1) {
+    selectedTarget = targets[0];
+  } else {
+    const targetType = await askChoice(
+      "Which app do you want to add modules to?",
+      targets.map(({ type, app }) => ({
+        value: type,
+        label: `${type === "client" ? "Client" : "Server"} (${app.directoryName})`,
+      })),
+    );
+
+    selectedTarget = targets.find(({ type }) => type === targetType);
+  }
+
+  const { type, app } = selectedTarget;
+
+  // Client module registry and template resolution are not yet
+  // implemented by the server-specific loaders currently in use.
+  if (type === "client") {
+    throw new Error(
+      "Adding client modules is not yet supported. " +
+      "The current module registry and template resolution flow " +
+      "supports server apps only.",
+    );
+  }
+
+  if (!app.frameworkKey || !app.apiFrameworkKey) {
+    throw new Error(
+      "The server stack configuration is incomplete. " +
+      "Check .templategen/project.json.",
+    );
+  }
+
+  // Module files, dependencies, integrations, and npm all target
+  // the app directory, not the enclosing project root.
+  const targetPath = resolveInside(
+    projectRoot,
+    app.directoryName,
+    "Server app directory",
+  );
+
+  const packagePath = path.join(targetPath, "package.json");
+
+  if (
+    !fs.existsSync(packagePath) ||
+    !fs.statSync(packagePath).isFile()
+  ) {
+    throw new Error(
+      `package.json not found: ${packagePath}\n` +
+      "Check the server directoryName in .templategen/project.json.",
     );
   }
 
   const moduleRegistry = loadModuleRegistry(
     "server",
-    metadata.server.frameworkKey,
-    metadata.server.apiFrameworkKey,
+    app.frameworkKey,
+    app.apiFrameworkKey,
   );
 
   const existingModules = metadata.modules?.server ?? {};
@@ -63,12 +129,17 @@ export async function addCommand() {
     return;
   }
 
-  const updatedMetadata = mergeSelectedModules(metadata, selectedModules);
+  const updatedMetadata = mergeSelectedModules(
+    metadata,
+    selectedModules,
+    "server",
+  );
 
-  const stackRoot = getStackRoot(metadata.server);
+  const stackRoot = getStackRoot(app);
 
   await integrateSelectedModules({
     targetPath,
+    metadataPath: projectRoot,
     stackRoot,
     moduleRegistry,
     selectedModules,
@@ -80,61 +151,4 @@ export async function addCommand() {
   console.log("");
   console.log("Modules added successfully.");
   console.log("");
-}
-
-async function identifyExistingProject(targetPath, knowledge) {
-  console.log("");
-  console.log(
-    "No TemplateGen metadata found. Identify this project's stack once.",
-  );
-  console.log("");
-
-  const frameworkEntries = Object.entries(knowledge.server.frameworks).filter(
-    ([, definition]) => definition.implemented,
-  );
-
-  const frameworkKey = await askChoice(
-    "Choose the existing project's server framework:",
-    frameworkEntries.map(([key, definition]) => ({
-      value: key,
-      label: definition.name,
-    })),
-  );
-
-  const frameworkDefinition = knowledge.server.frameworks[frameworkKey];
-
-  const apiFrameworkEntries = Object.entries(
-    frameworkDefinition.apiFrameworks ?? {},
-  ).filter(([, definition]) => definition.implemented);
-
-  if (apiFrameworkEntries.length === 0) {
-    throw new Error(
-      `No implemented API frameworks are available for ${frameworkDefinition.name}.`,
-    );
-  }
-
-  const apiFrameworkKey = await askChoice(
-    `Choose ${frameworkDefinition.name} API framework:`,
-    apiFrameworkEntries.map(([key, definition]) => ({
-      value: key,
-      label: definition.name,
-    })),
-  );
-
-  return createProjectMetadata({
-    projectName: path.basename(targetPath),
-
-    server: {
-      language: frameworkDefinition.language,
-      framework: frameworkDefinition.name,
-      frameworkKey,
-      apiFramework: frameworkDefinition.apiFrameworks[apiFrameworkKey].name,
-      apiFrameworkKey,
-    },
-
-    modules: {
-      client: {},
-      server: {},
-    },
-  });
 }

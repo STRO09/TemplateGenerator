@@ -57,22 +57,22 @@ export function createProjectMetadata({
 
     client: client
       ? {
-          directoryName: client.directoryName ?? null,
-          language: client.language ?? null,
-          languageKey: client.languageKey ?? null,
-          framework: client.framework ?? null,
-          frameworkKey: client.frameworkKey ?? null,
-        }
+        directoryName: client.directoryName ?? null,
+        language: client.language ?? null,
+        languageKey: client.languageKey ?? null,
+        framework: client.framework ?? null,
+        frameworkKey: client.frameworkKey ?? null,
+      }
       : null,
 
     server:
       server?.frameworkKey && server?.apiFrameworkKey
         ? {
-            directoryName: server.directoryName ?? null,
-            language: server.language ?? null,
-            frameworkKey: server.frameworkKey,
-            apiFrameworkKey: server.apiFrameworkKey,
-          }
+          directoryName: server.directoryName ?? null,
+          language: server.language ?? null,
+          frameworkKey: server.frameworkKey,
+          apiFrameworkKey: server.apiFrameworkKey,
+        }
         : null,
 
     modules: {
@@ -82,17 +82,29 @@ export function createProjectMetadata({
   };
 }
 
-export function mergeSelectedModules(metadata, selectedModules) {
+export function mergeSelectedModules(
+  metadata,
+  selectedModules,
+  targetType = "server",
+) {
+  if (!["client", "server"].includes(targetType)) {
+    throw new Error(`Unsupported module target: "${targetType}".`);
+  }
+
   return {
     ...metadata,
 
     modules: {
       ...(metadata.modules ?? {}),
-      client: metadata.modules?.client ?? {},
+
+      client: {
+        ...(metadata.modules?.client ?? {}),
+        ...(targetType === "client" ? selectedModules : {}),
+      },
 
       server: {
         ...(metadata.modules?.server ?? {}),
-        ...selectedModules,
+        ...(targetType === "server" ? selectedModules : {}),
       },
     },
   };

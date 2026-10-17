@@ -1,4 +1,4 @@
-import { applySelectedModulePatches } from "../patcher.js";
+import { applySelectedModuleIntegrations } from "../patcher.js";
 import { saveProjectMetadata } from "./project-metadata.js";
 import { copySelectedModuleFiles } from "./module-files.js";
 import { mergeSelectedDependencies } from "./dependencies.js";
@@ -49,11 +49,11 @@ export async function integrateSelectedModules({
         targetPath,
         stackRoot,
         selectedModules,
+        moduleRegistry,
       });
 
-      applySelectedModulePatches({
+      applySelectedModuleIntegrations({
         targetPath,
-        stackRoot,
         moduleRegistry,
         selectedModules,
       });

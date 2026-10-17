@@ -15,14 +15,14 @@
     <main class="workspace">
       <!-- =========================
          LANGUAGE COLUMN
-    ========================= -->
+      ========================= -->
       <aside class="lang-selection">
-        <div class="lang-selection__stage">
+        <div class="lang-selection__stage" style="--lang-chars: 10;">
           <!-- decorative glow layer (painted underneath) -->
-          <div class="glow" id="glowText" aria-hidden="true">Java</div>
+          <div class="glow" id="glowText" aria-hidden="true">JavaScript</div>
 
           <!-- the real, readable text -->
-          <div class="glitch" id="glitchText" data-text="Java">Java</div>
+          <div class="glitch" id="glitchText" data-text="JavaScript">JavaScript</div>
         </div>
 
         <!-- ---------- language dropdown ---------- -->
@@ -40,7 +40,7 @@
             aria-labelledby="languagePickerLabel languageTriggerValue"
           >
             <span class="language-picker__value" id="languageTriggerValue"
-              >Java</span
+              >JavaScript</span
             >
 
             <span class="language-picker__chevron" aria-hidden="true">
@@ -58,9 +58,28 @@
               class="language-picker__option"
               role="option"
               tabindex="-1"
+              data-value="JavaScript"
+              data-icon="javascript"
+              data-implemented="true"
+              aria-selected="true"
+            >
+              <span class="language-picker__option-icon" aria-hidden="true">
+                <img
+                  src="https://cdn.simpleicons.org/javascript/dfbfbf"
+                  alt=""
+                />
+              </span>
+              <span class="language-picker__option-name">JavaScript (Node.js Express)</span>
+            </li>
+
+            <li
+              class="language-picker__option"
+              role="option"
+              tabindex="-1"
               data-value="Java"
               data-icon="java"
-              aria-selected="true"
+              data-implemented="false"
+              aria-selected="false"
             >
               <span class="language-picker__option-icon" aria-hidden="true">
                 <img
@@ -68,7 +87,7 @@
                   alt=""
                 />
               </span>
-              <span class="language-picker__option-name">Java</span>
+              <span class="language-picker__option-name">Java (Spring)</span>
             </li>
 
             <li
@@ -77,29 +96,13 @@
               tabindex="-1"
               data-value="Python"
               data-icon="python"
+              data-implemented="false"
               aria-selected="false"
             >
               <span class="language-picker__option-icon" aria-hidden="true">
                 <img src="https://cdn.simpleicons.org/python/dfbfbf" alt="" />
               </span>
-              <span class="language-picker__option-name">Python</span>
-            </li>
-
-            <li
-              class="language-picker__option"
-              role="option"
-              tabindex="-1"
-              data-value="JavaScript"
-              data-icon="javascript"
-              aria-selected="false"
-            >
-              <span class="language-picker__option-icon" aria-hidden="true">
-                <img
-                  src="https://cdn.simpleicons.org/javascript/dfbfbf"
-                  alt=""
-                />
-              </span>
-              <span class="language-picker__option-name">JavaScript</span>
+              <span class="language-picker__option-name">Python (FastAPI)</span>
             </li>
 
             <li
@@ -108,6 +111,7 @@
               tabindex="-1"
               data-value="TypeScript"
               data-icon="typescript"
+              data-implemented="false"
               aria-selected="false"
             >
               <span class="language-picker__option-icon" aria-hidden="true">
@@ -125,6 +129,7 @@
               tabindex="-1"
               data-value="Go"
               data-icon="go"
+              data-implemented="false"
               aria-selected="false"
             >
               <span class="language-picker__option-icon" aria-hidden="true">
@@ -139,6 +144,7 @@
               tabindex="-1"
               data-value="Rust"
               data-icon="rust"
+              data-implemented="false"
               aria-selected="false"
             >
               <span class="language-picker__option-icon" aria-hidden="true">
@@ -153,6 +159,7 @@
               tabindex="-1"
               data-value="C++"
               data-icon="cplusplus"
+              data-implemented="false"
               aria-selected="false"
             >
               <span class="language-picker__option-icon" aria-hidden="true">
@@ -170,6 +177,7 @@
               tabindex="-1"
               data-value="C#"
               data-icon="csharp"
+              data-implemented="false"
               aria-selected="false"
             >
               <span class="language-picker__option-icon" aria-hidden="true">
@@ -183,16 +191,31 @@
           </ul>
         </div>
 
-        <div style="display: flex; justify-content: center; width: min(100%, 34rem);">
+        <!-- Project name input -->
+        <div class="project-input-container">
+          <label class="project-input__label" for="projectNameInput">Project Name</label>
+          <input
+            class="project-input__field"
+            type="text"
+            id="projectNameInput"
+            value="my-app"
+            placeholder="my-app"
+            spellcheck="false"
+            autocomplete="off"
+          />
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: center; width: min(100%, 34rem);">
           <button class="generate-btn" type="button" id="generateBtn">
-            Generate
+            Generate & Download ZIP
           </button>
+          <div class="lang-notice" id="langNotice"></div>
         </div>
       </aside>
 
       <!-- =========================
          TECH / FEATURE COLUMN
-    ========================= -->
+      ========================= -->
       <section class="tech-selection" aria-labelledby="techSelectionTitle">
         <form
           class="tech-selection__form"
@@ -206,33 +229,20 @@
                 >Modules</span
               >
               <span class="feature-fieldset__hint"
-                >Pick the pieces you want in the template</span
+                >Select modules to patch into your Express template</span
               >
             </legend>
 
             <div class="feature-grid">
-              <label class="feature-card">
-                <input
-                  class="feature-card__input"
-                  type="checkbox"
-                  name="features"
-                  value="map"
-                />
-                <span class="feature-card__check" aria-hidden="true"
-                  ><i data-lucide="check"></i
-                ></span>
-                <span class="feature-card__icon" aria-hidden="true"
-                  ><i data-lucide="map"></i
-                ></span>
-                <span class="feature-card__name">Map</span>
-              </label>
-
-              <label class="feature-card">
+              <!-- LIVE: Socket (Socket.IO) -->
+              <label class="feature-card" data-module="socket">
                 <input
                   class="feature-card__input"
                   type="checkbox"
                   name="features"
                   value="socket"
+                  data-provider="socket.io"
+                  checked
                 />
                 <span class="feature-card__check" aria-hidden="true"
                   ><i data-lucide="check"></i
@@ -240,15 +250,19 @@
                 <span class="feature-card__icon" aria-hidden="true"
                   ><i data-lucide="plug"></i
                 ></span>
-                <span class="feature-card__name">Socket</span>
+                <span class="feature-card__name">Socket (Socket.IO)</span>
+                <span class="feature-card__badge is-live">Live</span>
               </label>
 
-              <label class="feature-card">
+              <!-- LIVE: Database (MongoDB / Mongoose) -->
+              <label class="feature-card" data-module="db">
                 <input
                   class="feature-card__input"
                   type="checkbox"
                   name="features"
-                  value="redis"
+                  value="db"
+                  data-provider="mongoose"
+                  checked
                 />
                 <span class="feature-card__check" aria-hidden="true"
                   ><i data-lucide="check"></i
@@ -256,47 +270,18 @@
                 <span class="feature-card__icon" aria-hidden="true"
                   ><i data-lucide="database"></i
                 ></span>
-                <span class="feature-card__name">Redis</span>
+                <span class="feature-card__name">Database (Mongoose)</span>
+                <span class="feature-card__badge is-live">Live</span>
               </label>
 
-              <label class="feature-card">
-                <input
-                  class="feature-card__input"
-                  type="checkbox"
-                  name="features"
-                  value="email"
-                />
-                <span class="feature-card__check" aria-hidden="true"
-                  ><i data-lucide="check"></i
-                ></span>
-                <span class="feature-card__icon" aria-hidden="true"
-                  ><i data-lucide="mail"></i
-                ></span>
-                <span class="feature-card__name">Email</span>
-              </label>
-
-              <label class="feature-card">
-                <input
-                  class="feature-card__input"
-                  type="checkbox"
-                  name="features"
-                  value="notification"
-                />
-                <span class="feature-card__check" aria-hidden="true"
-                  ><i data-lucide="check"></i
-                ></span>
-                <span class="feature-card__icon" aria-hidden="true"
-                  ><i data-lucide="bell"></i
-                ></span>
-                <span class="feature-card__name">Notification</span>
-              </label>
-
-              <label class="feature-card">
+              <!-- COMING SOON MODULES -->
+              <label class="feature-card is-disabled" title="Coming soon to TemplateGen registry">
                 <input
                   class="feature-card__input"
                   type="checkbox"
                   name="features"
                   value="auth"
+                  disabled
                 />
                 <span class="feature-card__check" aria-hidden="true"
                   ><i data-lucide="check"></i
@@ -305,14 +290,34 @@
                   ><i data-lucide="shield-check"></i
                 ></span>
                 <span class="feature-card__name">Auth</span>
+                <span class="feature-card__badge">Soon</span>
               </label>
 
-              <label class="feature-card">
+              <label class="feature-card is-disabled" title="Coming soon to TemplateGen registry">
+                <input
+                  class="feature-card__input"
+                  type="checkbox"
+                  name="features"
+                  value="redis"
+                  disabled
+                />
+                <span class="feature-card__check" aria-hidden="true"
+                  ><i data-lucide="check"></i
+                ></span>
+                <span class="feature-card__icon" aria-hidden="true"
+                  ><i data-lucide="database"></i
+                ></span>
+                <span class="feature-card__name">Redis</span>
+                <span class="feature-card__badge">Soon</span>
+              </label>
+
+              <label class="feature-card is-disabled" title="Coming soon to TemplateGen registry">
                 <input
                   class="feature-card__input"
                   type="checkbox"
                   name="features"
                   value="cache"
+                  disabled
                 />
                 <span class="feature-card__check" aria-hidden="true"
                   ><i data-lucide="check"></i
@@ -321,14 +326,52 @@
                   ><i data-lucide="zap"></i
                 ></span>
                 <span class="feature-card__name">Cache</span>
+                <span class="feature-card__badge">Soon</span>
               </label>
 
-              <label class="feature-card">
+              <label class="feature-card is-disabled" title="Coming soon to TemplateGen registry">
+                <input
+                  class="feature-card__input"
+                  type="checkbox"
+                  name="features"
+                  value="notification"
+                  disabled
+                />
+                <span class="feature-card__check" aria-hidden="true"
+                  ><i data-lucide="check"></i
+                ></span>
+                <span class="feature-card__icon" aria-hidden="true"
+                  ><i data-lucide="bell"></i
+                ></span>
+                <span class="feature-card__name">Notification</span>
+                <span class="feature-card__badge">Soon</span>
+              </label>
+
+              <label class="feature-card is-disabled" title="Coming soon to TemplateGen registry">
+                <input
+                  class="feature-card__input"
+                  type="checkbox"
+                  name="features"
+                  value="email"
+                  disabled
+                />
+                <span class="feature-card__check" aria-hidden="true"
+                  ><i data-lucide="check"></i
+                ></span>
+                <span class="feature-card__icon" aria-hidden="true"
+                  ><i data-lucide="mail"></i
+                ></span>
+                <span class="feature-card__name">Email</span>
+                <span class="feature-card__badge">Soon</span>
+              </label>
+
+              <label class="feature-card is-disabled" title="Coming soon to TemplateGen registry">
                 <input
                   class="feature-card__input"
                   type="checkbox"
                   name="features"
                   value="queue"
+                  disabled
                 />
                 <span class="feature-card__check" aria-hidden="true"
                   ><i data-lucide="check"></i
@@ -337,46 +380,31 @@
                   ><i data-lucide="list-ordered"></i
                 ></span>
                 <span class="feature-card__name">Queue</span>
+                <span class="feature-card__badge">Soon</span>
               </label>
 
-              <label class="feature-card">
-                <input
-                  class="feature-card__input"
-                  type="checkbox"
-                  name="features"
-                  value="search"
-                />
-                <span class="feature-card__check" aria-hidden="true"
-                  ><i data-lucide="check"></i
-                ></span>
-                <span class="feature-card__icon" aria-hidden="true"
-                  ><i data-lucide="search"></i
-                ></span>
-                <span class="feature-card__name">Search</span>
-              </label>
-
-              <label class="feature-card">
+              <label class="feature-card is-disabled" title="Coming soon to TemplateGen registry">
                 <input
                   class="feature-card__input"
                   type="checkbox"
                   name="features"
                   value="storage"
+                  disabled
                 />
                 <span class="feature-card__check" aria-hidden="true"
-                  ><i data-lucide="check"></i
-                ></span>
-                <span class="feature-card__icon" aria-hidden="true"
                   ><i data-lucide="hard-drive"></i
                 ></span>
                 <span class="feature-card__name">Storage</span>
+                <span class="feature-card__badge">Soon</span>
               </label>
 
-              <label class="feature-card">
+              <label class="feature-card is-disabled" title="Coming soon to TemplateGen registry">
                 <input
                   class="feature-card__input"
                   type="checkbox"
                   name="features"
                   value="payment"
+                  disabled
                 />
                 <span class="feature-card__check" aria-hidden="true"
                   ><i data-lucide="check"></i
@@ -385,22 +413,43 @@
                   ><i data-lucide="credit-card"></i
                 ></span>
                 <span class="feature-card__name">Payment</span>
+                <span class="feature-card__badge">Soon</span>
               </label>
 
-              <label class="feature-card">
+              <label class="feature-card is-disabled" title="Coming soon to TemplateGen registry">
                 <input
                   class="feature-card__input"
                   type="checkbox"
                   name="features"
-                  value="analytics"
+                  value="search"
+                  disabled
                 />
                 <span class="feature-card__check" aria-hidden="true"
                   ><i data-lucide="check"></i
                 ></span>
                 <span class="feature-card__icon" aria-hidden="true"
-                  ><i data-lucide="trending-up"></i
+                  ><i data-lucide="search"></i
                 ></span>
-                <span class="feature-card__name">Analytics</span>
+                <span class="feature-card__name">Search</span>
+                <span class="feature-card__badge">Soon</span>
+              </label>
+
+              <label class="feature-card is-disabled" title="Coming soon to TemplateGen registry">
+                <input
+                  class="feature-card__input"
+                  type="checkbox"
+                  name="features"
+                  value="map"
+                  disabled
+                />
+                <span class="feature-card__check" aria-hidden="true"
+                  ><i data-lucide="check"></i
+                ></span>
+                <span class="feature-card__icon" aria-hidden="true"
+                  ><i data-lucide="map"></i
+                ></span>
+                <span class="feature-card__name">Map</span>
+                <span class="feature-card__badge">Soon</span>
               </label>
             </div>
           </fieldset>
@@ -408,7 +457,41 @@
       </section>
     </main>
 
-    <footer class="site-footer"></footer>
+    <!-- =========================
+       RESULT MODAL
+    ========================= -->
+    <div class="modal-overlay" id="resultModal" aria-hidden="true">
+      <div class="modal-card">
+        <div class="modal-header">
+          <span class="modal-badge">TemplateGen Scaffolding Complete</span>
+          <button class="modal-close" id="closeModalBtn" type="button" aria-label="Close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <h2 class="modal-title" id="modalTitle">Project Downloaded</h2>
+          <p class="modal-subtitle">
+            Base Express template copied, dependencies merged into <code>package.json</code>, and AST patch transformations applied successfully. The ZIP has been saved to your Downloads.
+          </p>
+
+          <div class="modal-section">
+            <span class="modal-section-title">Patched Files (AST &amp; Environment)</span>
+            <ul class="modal-list" id="modalPatchedFiles"></ul>
+          </div>
+
+          <div class="modal-section">
+            <span class="modal-section-title">Copied Module Files</span>
+            <ul class="modal-list" id="modalCopiedModules"></ul>
+          </div>
+
+          <div class="modal-section">
+            <span class="modal-section-title">Next Steps</span>
+            <div class="code-block" id="modalNextSteps"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="modal-btn" id="modalDoneBtn" type="button">Close</button>
+        </div>
+      </div>
+    </div>
 
     <!-- icon library -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
@@ -419,8 +502,7 @@
 
         /* ---------------------------------------------------
          ELEMENTS
-      --------------------------------------------------- */
-
+        --------------------------------------------------- */
         const glitchElement = document.getElementById("glitchText");
         const glowElement = document.getElementById("glowText");
         const stageElement = document.querySelector(".lang-selection__stage");
@@ -428,28 +510,34 @@
         const pickerElement = document.getElementById("languagePicker");
         const triggerElement = document.getElementById("languageTrigger");
         const valueElement = document.getElementById("languageTriggerValue");
-
         const listElement = document.getElementById("languageList");
-
         const optionElements = Array.from(
           listElement.querySelectorAll(".language-picker__option"),
         );
 
+        const projectNameInput = document.getElementById("projectNameInput");
+        const generateBtn = document.getElementById("generateBtn");
+        const langNotice = document.getElementById("langNotice");
+        const techForm = document.getElementById("techForm");
+
+        const resultModal = document.getElementById("resultModal");
+        const closeModalBtn = document.getElementById("closeModalBtn");
+        const modalDoneBtn = document.getElementById("modalDoneBtn");
+        const modalTitle = document.getElementById("modalTitle");
+        const modalPatchedFiles = document.getElementById("modalPatchedFiles");
+        const modalCopiedModules = document.getElementById("modalCopiedModules");
+        const modalNextSteps = document.getElementById("modalNextSteps");
+
         /* ---------------------------------------------------
-         CONSTANTS / STATE
-      --------------------------------------------------- */
-
-        const ICON_BASE = "https://cdn.simpleicons.org/";
-        const ICON_TINT = "dfbfbf";
-
-        let currentLanguage = "Java";
+         STATE
+        --------------------------------------------------- */
+        let currentLanguage = "JavaScript";
         let pendingSelection = null;
         let isGlitching = false;
 
         /* ---------------------------------------------------
-         DROPDOWN OPEN / CLOSE
-      --------------------------------------------------- */
-
+         DROPDOWN LOGIC
+        --------------------------------------------------- */
         function isListOpen() {
           return pickerElement.classList.contains("is-open");
         }
@@ -473,34 +561,29 @@
           if (event.key === "ArrowDown" || event.key === "ArrowUp") {
             event.preventDefault();
             openList();
-
             const activeOption =
-              optionElements.find(function (option) {
-                return option.getAttribute("aria-selected") === "true";
-              }) || optionElements[0];
-
+              optionElements.find(
+                (opt) => opt.getAttribute("aria-selected") === "true",
+              ) || optionElements[0];
             activeOption.focus();
           }
         });
 
-        /* click outside -> close */
         document.addEventListener("click", function (event) {
           if (!pickerElement.contains(event.target)) {
             closeList();
           }
         });
 
-        /* escape -> close */
         document.addEventListener("keydown", function (event) {
-          if (event.key === "Escape" && isListOpen()) {
-            closeList();
-            triggerElement.focus();
+          if (event.key === "Escape") {
+            if (isListOpen()) {
+              closeList();
+              triggerElement.focus();
+            }
+            hideModal();
           }
         });
-
-        /* ---------------------------------------------------
-         OPTION INTERACTION
-      --------------------------------------------------- */
 
         optionElements.forEach(function (option, index) {
           option.addEventListener("click", function () {
@@ -526,74 +609,53 @@
         });
 
         /* ---------------------------------------------------
-         LANGUAGE CHANGE  ->  GLITCH  ->  SWAP TEXT
-      --------------------------------------------------- */
+         LANGUAGE SELECTION & GLITCH
+        --------------------------------------------------- */
+        function triggerGlitch(callback) {
+          if (isGlitching) return;
+          isGlitching = true;
+          document.body.classList.add("glitching");
+
+          function onEnd(e) {
+            if (e.pseudoElement) return;
+            glitchElement.removeEventListener("animationend", onEnd);
+            document.body.classList.remove("glitching");
+            isGlitching = false;
+            if (callback) callback();
+          }
+
+          glitchElement.addEventListener("animationend", onEnd);
+        }
 
         function chooseLanguage(option) {
           closeList();
           triggerElement.focus();
 
           const language = option.dataset.value;
-          const icon = option.dataset.icon;
+          const isImplemented = option.dataset.implemented === "true";
 
-          /* picking the language that is already active cancels
-           any in-flight change and does nothing else */
           if (language === currentLanguage) {
-            pendingSelection = null;
             return;
           }
 
-          pendingSelection = { language: language, icon: icon };
+          pendingSelection = { language, isImplemented };
 
-          /* a glitch is already running: the latest pick wins,
-           it will be applied when the animation ends */
-          if (isGlitching) {
-            return;
-          }
-
-          isGlitching = true;
-          document.body.classList.add("glitching");
-
-          glitchElement.addEventListener("animationend", handleGlitchEnd);
-        }
-
-        function handleGlitchEnd(event) {
-          /* the ::before / ::after ghosts fire their own
-           animationend events - ignore those */
-          if (event.pseudoElement) {
-            return;
-          }
-
-          glitchElement.removeEventListener("animationend", handleGlitchEnd);
-
-          if (pendingSelection) {
+          triggerGlitch(function () {
             applySelection();
-          }
-
-          document.body.classList.remove("glitching");
-          isGlitching = false;
+          });
         }
 
         function applySelection() {
-          const language = pendingSelection.language;
-          const icon = pendingSelection.icon;
-
+          if (!pendingSelection) return;
+          const { language, isImplemented } = pendingSelection;
           pendingSelection = null;
           currentLanguage = language;
 
-          /* 1. visible text */
           glitchElement.textContent = language;
-
-          /* 2. text used by ::before / ::after */
           glitchElement.dataset.text = language;
-
-          /* 3. glow layer */
           glowElement.textContent = language;
-
-          /* 4. dropdown trigger */
           valueElement.textContent = language;
 
-          /* 5. dropdown option states */
           optionElements.forEach(function (option) {
             option.setAttribute(
               "aria-selected",
@@ -601,17 +663,193 @@
             );
           });
 
-          /* 6. keep the display type inside the column */
-          stageElement.style.setProperty(
-            "--lang-chars",
-            String(language.length),
-          );
+          stageElement.style.setProperty("--lang-chars", String(language.length));
+
+          if (!isImplemented) {
+            langNotice.textContent = `${language} is not yet implemented in TemplateGen. Choose JavaScript for Express scaffolding.`;
+            generateBtn.disabled = true;
+          } else {
+            langNotice.textContent = "";
+            generateBtn.disabled = false;
+          }
         }
 
         /* ---------------------------------------------------
-         ICONS
-      --------------------------------------------------- */
+         MODAL & TOAST
+        --------------------------------------------------- */
+        function showModal(data) {
+          modalTitle.textContent = `${data.projectName}.zip Downloaded`;
 
+          modalPatchedFiles.innerHTML = "";
+          if (data.integratedFiles && data.integratedFiles.length > 0) {
+            data.integratedFiles.forEach((file) => {
+              const li = document.createElement("li");
+              li.textContent = file;
+              modalPatchedFiles.appendChild(li);
+            });
+          } else {
+            const li = document.createElement("li");
+            li.textContent = "None (Base template only)";
+            modalPatchedFiles.appendChild(li);
+          }
+
+          modalCopiedModules.innerHTML = "";
+          if (data.copiedModules && data.copiedModules.length > 0) {
+            data.copiedModules.forEach((mod) => {
+              const li = document.createElement("li");
+              li.textContent = `modules/${mod}`;
+              modalCopiedModules.appendChild(li);
+            });
+          } else {
+            const li = document.createElement("li");
+            li.textContent = "None";
+            modalCopiedModules.appendChild(li);
+          }
+
+          modalNextSteps.innerHTML = "";
+          (data.nextSteps || [
+            `cd ${data.projectName}/server`,
+            "npm install",
+            "npm start",
+          ]).forEach((step) => {
+            const div = document.createElement("div");
+            div.textContent = step;
+            modalNextSteps.appendChild(div);
+          });
+
+          resultModal.classList.add("is-active");
+          resultModal.setAttribute("aria-hidden", "false");
+        }
+
+        function hideModal() {
+          resultModal.classList.remove("is-active");
+          resultModal.setAttribute("aria-hidden", "true");
+        }
+
+        closeModalBtn.addEventListener("click", hideModal);
+        modalDoneBtn.addEventListener("click", hideModal);
+        resultModal.addEventListener("click", function (e) {
+          if (e.target === resultModal) hideModal();
+        });
+
+        function showToast(message) {
+          const existing = document.querySelector(".toast");
+          if (existing) existing.remove();
+
+          const toast = document.createElement("div");
+          toast.className = "toast";
+          toast.innerHTML = `<i data-lucide="alert-circle"></i><span>${message}</span>`;
+          document.body.appendChild(toast);
+          if (window.lucide) window.lucide.createIcons();
+
+          setTimeout(() => {
+            toast.style.transition = "opacity 0.3s ease";
+            toast.style.opacity = "0";
+            setTimeout(() => toast.remove(), 300);
+          }, 4000);
+        }
+
+        /* ---------------------------------------------------
+         GENERATE ACTION
+        --------------------------------------------------- */
+        generateBtn.addEventListener("click", async function () {
+          const projectName = projectNameInput.value.trim();
+
+          if (!projectName) {
+            showToast("Please enter a valid project name.");
+            projectNameInput.focus();
+            return;
+          }
+
+          if (currentLanguage !== "JavaScript") {
+            showToast(`${currentLanguage} is not implemented. Please select JavaScript.`);
+            return;
+          }
+
+          // Gather selected modules and their providers
+          const selectedModules = {};
+          const checkboxes = techForm.querySelectorAll(
+            'input[name="features"]:checked',
+          );
+
+          checkboxes.forEach((cb) => {
+            const moduleKey = cb.value;
+            const providerKey = cb.dataset.provider;
+            if (providerKey) {
+              selectedModules[moduleKey] = { provider: providerKey };
+            }
+          });
+
+          generateBtn.disabled = true;
+          generateBtn.classList.add("is-loading");
+          generateBtn.textContent = "Scaffolding & Patching...";
+
+          try {
+            const response = await fetch("/api/generate", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                projectName,
+                serverDirectory: "server",
+                modules: selectedModules,
+              }),
+            });
+
+            if (!response.ok) {
+              let errorMsg = `Generation failed (${response.status})`;
+              try {
+                const errData = await response.json();
+                if (errData?.message) errorMsg = errData.message;
+              } catch (_) {}
+              throw new Error(errorMsg);
+            }
+
+            // Extract metadata from response headers
+            const integratedFiles = JSON.parse(
+              response.headers.get("X-Integrated-Files") || "[]",
+            );
+            const copiedModules = JSON.parse(
+              response.headers.get("X-Copied-Modules") || "[]",
+            );
+            const nextSteps = JSON.parse(
+              response.headers.get("X-Next-Steps") || "[]",
+            );
+
+            // Stream ZIP blob and trigger browser download
+            const blob = await response.blob();
+            const blobUrl = window.URL.createObjectURL(blob);
+            const downloadLink = document.createElement("a");
+            downloadLink.href = blobUrl;
+            downloadLink.download = `${projectName}.zip`;
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            downloadLink.remove();
+            window.URL.revokeObjectURL(blobUrl);
+
+            // Run glitch effect celebration
+            triggerGlitch();
+
+            // Display completion modal
+            showModal({
+              projectName,
+              integratedFiles,
+              copiedModules,
+              nextSteps,
+            });
+          } catch (error) {
+            showToast(error.message || "Failed to generate project.");
+          } finally {
+            generateBtn.disabled = false;
+            generateBtn.classList.remove("is-loading");
+            generateBtn.textContent = "Generate & Download ZIP";
+          }
+        });
+
+        /* ---------------------------------------------------
+         INIT ICONS
+        --------------------------------------------------- */
         if (window.lucide) {
           window.lucide.createIcons();
         }

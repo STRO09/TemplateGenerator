@@ -23,6 +23,10 @@ import env from "../config/env.js";
 const repositories = {};
 
 switch (env.DB_DRIVER) {
+  case undefined:
+  case null:
+  case "":
+    break;
 
   default:
     throw new Error(`Unsupported database driver: ${env.DB_DRIVER}`);

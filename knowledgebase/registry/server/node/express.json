@@ -13,35 +13,171 @@
               "socket.io": "^4.8.3"
             }
           },
-          "patches": [
+          "files": [
+            {
+              "from": "events",
+              "to": "src/socket/events"
+            },
+            {
+              "from": "providers",
+              "to": "src/socket/providers"
+            },
+            {
+              "from": "socket.js",
+              "to": "src/socket/socket.js"
+            }
+          ],
+          "integrations": [
             {
               "file": "src/server.js",
               "operation": "add-import",
-              "anchor": "// ----imports --------------",
-              "patch": "modules/socket/patches/server-import.txt"
+              "source": "./socket/socket.js",
+              "specifiers": [
+                {
+                  "kind": "named",
+                  "imported": "initializeSockets",
+                  "local": "initializeSockets"
+                }
+              ]
             },
             {
               "file": "src/server.js",
-              "operation": "insert-before-anchor",
-              "anchor": "} catch (err) {",
-              "patch": "modules/socket/patches/server-init.txt"
+              "operation": "insert-before-call",
+              "callee": "server.listen",
+              "statements": [
+                "logger.info(\"Starting socket server\");",
+                "initializeSockets(server);"
+              ]
             },
             {
               "file": "src/config/env.js",
-              "operation": "append-object-property",
+              "operation": "add-object-properties",
               "object": "env",
-              "patch": "modules/socket/patches/env-property.txt"
+              "properties": [
+                {
+                  "key": "SOCKET_PROVIDER",
+                  "value": "process.env.SOCKET_PROVIDER ?? \"socketio\""
+                }
+              ]
             },
             {
               "file": ".env.example",
-              "operation": "append",
-              "patch": "modules/socket/patches/envexample.txt"
+              "operation": "merge-env",
+              "entries": {
+                "SOCKET_PROVIDER": "socketio"
+              }
             }
           ]
         },
         "ws": {
           "name": "ws",
           "implemented": false
+        }
+      }
+    },
+    "db": {
+      "name": "Database",
+      "implemented": true,
+      "providers": {
+        "mongoose": {
+          "name": "MongoDB (Mongoose)",
+          "implemented": true,
+          "dependencies": {
+            "npm": {
+              "mongoose": "^8.0.0"
+            }
+          },
+          "files": [
+            {
+              "from": "mongoose/models",
+              "to": "src/db/mongoose/models"
+            },
+            {
+              "from": "mongoose/repositories",
+              "to": "src/db/mongoose/repositories"
+            },
+            {
+              "from": "db.config.js",
+              "to": "src/config/db.config.js"
+            }
+          ],
+          "integrations": [
+            {
+              "file": "src/server.js",
+              "operation": "add-import",
+              "source": "./config/db.config.js",
+              "specifiers": [
+                {
+                  "kind": "default",
+                  "local": "connectDB"
+                }
+              ]
+            },
+            {
+              "file": "src/server.js",
+              "operation": "insert-before-call",
+              "callee": "http.createServer",
+              "statements": [
+                "await connectDB();"
+              ]
+            },
+            {
+              "file": "src/config/env.js",
+              "operation": "add-object-properties",
+              "object": "env",
+              "properties": [
+                {
+                  "key": "DB_DRIVER",
+                  "value": "process.env.DB_DRIVER ?? \"mongo\""
+                },
+                {
+                  "key": "MONGO_URI",
+                  "value": "process.env.MONGO_URI"
+                }
+              ]
+            },
+            {
+              "file": ".env.example",
+              "operation": "merge-env",
+              "entries": {
+                "DB_DRIVER": "mongo",
+                "MONGO_URI": "YOUR_MONGO_URI"
+              }
+            },
+            {
+              "file": "src/db/provider.js",
+              "operation": "add-import",
+              "source": "./mongoose/repositories/product.repository.js",
+              "specifiers": [
+                {
+                  "kind": "default",
+                  "local": "productRepository"
+                }
+              ]
+            },
+            {
+              "file": "src/db/provider.js",
+              "operation": "add-import",
+              "source": "./mongoose/repositories/user.repository.js",
+              "specifiers": [
+                {
+                  "kind": "default",
+                  "local": "userRepository"
+                }
+              ]
+            },
+            {
+              "file": "src/db/provider.js",
+              "operation": "add-switch-case",
+              "discriminant": "env.DB_DRIVER",
+              "test": "mongo",
+              "statements": [
+                "repositories.product = productRepository;",
+                "repositories.user = userRepository;",
+                "break;"
+              ]
+            }
+          ]
         }
       }
     }
