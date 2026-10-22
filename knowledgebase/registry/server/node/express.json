@@ -180,6 +180,586 @@
           ]
         }
       }
+    },
+    "fileUpload": {
+      "name": "File Upload",
+      "implemented": true,
+      "providers": {
+        "local": {
+          "name": "Local Storage",
+          "implemented": true,
+          "dependencies": {
+            "npm": {
+              "multer": "^2.4.0"
+            }
+          },
+          "files": [
+            {
+              "from": "middleware/upload.middleware.js",
+              "to": "src/middleware/upload.middleware.js"
+            },
+            {
+              "from": "providers/local.provider.js",
+              "to": "src/fileUpload/providers/local.provider.js"
+            },
+            {
+              "from": "providers/provider.interface.js",
+              "to": "src/fileUpload/providers/provider.interface.js"
+            },
+            {
+              "from": "providers/provider.js",
+              "to": "src/fileUpload/providers/provider.js"
+            },
+            {
+              "from": "config/upload.config.js",
+              "to": "src/config/upload.config.js"
+            }
+          ],
+          "integrations": [
+            {
+              "file": "src/config/env.js",
+              "operation": "add-object-properties",
+              "object": "env",
+              "properties": [
+                {
+                  "key": "FILE_STORAGE_PROVIDER",
+                  "value": "process.env.FILE_STORAGE_PROVIDER ?? \"local\""
+                }
+              ]
+            },
+            {
+              "file": ".env.example",
+              "operation": "merge-env",
+              "entries": {
+                "FILE_STORAGE_PROVIDER": "local"
+              }
+            }
+          ]
+        },
+        "cloudinary": {
+          "name": "Cloudinary",
+          "implemented": false,
+          "files": [
+            {
+              "from": "middleware/upload.middleware.js",
+              "to": "src/middleware/upload.middleware.js"
+            },
+            {
+              "from": "providers/cloudinary.provider.js",
+              "to": "src/fileUpload/providers/cloudinary.provider.js"
+            },
+            {
+              "from": "providers/provider.interface.js",
+              "to": "src/fileUpload/providers/provider.interface.js"
+            },
+            {
+              "from": "providers/provider.js",
+              "to": "src/fileUpload/providers/provider.js"
+            },
+            {
+              "from": "config/upload.config.js",
+              "to": "src/config/upload.config.js"
+            }
+          ]
+        },
+        "s3": {
+          "name": "Amazon S3",
+          "implemented": false,
+          "files": [
+            {
+              "from": "middleware/upload.middleware.js",
+              "to": "src/middleware/upload.middleware.js"
+            },
+            {
+              "from": "providers/s3.provider.js",
+              "to": "src/fileUpload/providers/s3.provider.js"
+            },
+            {
+              "from": "providers/provider.interface.js",
+              "to": "src/fileUpload/providers/provider.interface.js"
+            },
+            {
+              "from": "providers/provider.js",
+              "to": "src/fileUpload/providers/provider.js"
+            },
+            {
+              "from": "config/upload.config.js",
+              "to": "src/config/upload.config.js"
+            }
+          ]
+        }
+      }
+    },
+    "cache": {
+      "name": "Cache",
+      "implemented": true,
+      "providers": {
+        "inmemory": {
+          "name": "In-Memory Cache",
+          "implemented": true,
+          "files": [
+            {
+              "from": "keys",
+              "to": "src/cache/keys"
+            },
+            {
+              "from": "providers/inMemory.provider.js",
+              "to": "src/cache/providers/inMemory.provider.js"
+            },
+            {
+              "from": "providers/provider.interface.js",
+              "to": "src/cache/providers/provider.interface.js"
+            },
+            {
+              "from": "providers/provider.js",
+              "to": "src/cache/providers/provider.js"
+            }
+          ],
+          "integrations": [
+            {
+              "file": "src/config/env.js",
+              "operation": "add-object-properties",
+              "object": "env",
+              "properties": [
+                {
+                  "key": "CACHE_PROVIDER",
+                  "value": "process.env.CACHE_PROVIDER ?? \"memory\""
+                }
+              ]
+            },
+            {
+              "file": ".env.example",
+              "operation": "merge-env",
+              "entries": {
+                "CACHE_PROVIDER": "memory"
+              }
+            }
+          ]
+        },
+        "redis": {
+          "name": "Redis",
+          "implemented": true,
+          "dependencies": {
+            "npm": {
+              "redis": "^6.2.1"
+            }
+          },
+          "files": [
+            {
+              "from": "keys",
+              "to": "src/cache/keys"
+            },
+            {
+              "from": "providers/redis.provider.js",
+              "to": "src/cache/providers/redis.provider.js"
+            },
+            {
+              "from": "providers/provider.interface.js",
+              "to": "src/cache/providers/provider.interface.js"
+            },
+            {
+              "from": "providers/provider.js",
+              "to": "src/cache/providers/provider.js"
+            },
+            {
+              "from": "config/redis.config.js",
+              "to": "src/config/redis.config.js"
+            }
+          ],
+          "integrations": [
+            {
+              "file": "src/config/env.js",
+              "operation": "add-object-properties",
+              "object": "env",
+              "properties": [
+                {
+                  "key": "CACHE_PROVIDER",
+                  "value": "process.env.CACHE_PROVIDER ?? \"redis\""
+                },
+                {
+                  "key": "REDIS_HOST",
+                  "value": "process.env.REDIS_HOST ?? \"127.0.0.1\""
+                },
+                {
+                  "key": "REDIS_PORT",
+                  "value": "Number(process.env.REDIS_PORT ?? 6379)"
+                },
+                {
+                  "key": "REDIS_PASSWORD",
+                  "value": "process.env.REDIS_PASSWORD"
+                },
+                {
+                  "key": "REDIS_DATABASE",
+                  "value": "Number(process.env.REDIS_DATABASE ?? 0)"
+                }
+              ]
+            },
+            {
+              "file": ".env.example",
+              "operation": "merge-env",
+              "entries": {
+                "CACHE_PROVIDER": "redis",
+                "REDIS_HOST": "127.0.0.1",
+                "REDIS_PORT": "6379",
+                "REDIS_PASSWORD": "",
+                "REDIS_DATABASE": "0"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workers": {
+      "name": "Workers",
+      "implemented": true,
+      "providers": {
+        "node-workers": {
+          "name": "Node.js Worker Threads",
+          "implemented": true,
+          "dependencies": {
+            "npm": {
+              "crypto": "^1.0.1"
+            }
+          },
+          "files": [
+            {
+              "from": "worker.js",
+              "to": "src/workers/worker.js"
+            },
+            {
+              "from": "workerPool.js",
+              "to": "src/workers/workerPool.js"
+            },
+            {
+              "from": "tasks",
+              "to": "src/workers/tasks"
+            }
+          ],
+          "integrations": []
+        }
+      }
+    },
+    "validators": {
+      "name": "Validators",
+      "implemented": true,
+      "providers": {
+        "zod": {
+          "name": "Zod",
+          "implemented": true,
+          "dependencies": {
+            "npm": {
+              "zod": "^4.4.3"
+            }
+          },
+          "files": [
+            {
+              "from": "middleware/validation.middleware.js",
+              "to": "src/middleware/validation.middleware.js"
+            },
+            {
+              "from": "zod",
+              "to": "src/validators"
+            }
+          ],
+          "integrations": []
+        }
+      }
+    },
+    "payment": {
+      "name": "Payment",
+      "implemented": true,
+      "providers": {
+        "razorpay": {
+          "name": "Razorpay",
+          "implemented": true,
+          "dependencies": {
+            "npm": {
+              "razorpay": "^2.9.5"
+            }
+          },
+          "files": [
+            {
+              "from": "controllers/order.controller.js",
+              "to": "src/controllers/order.controller.js"
+            },
+            {
+              "from": "routes/order.routes.js",
+              "to": "src/routes/order.routes.js"
+            },
+            {
+              "from": "services/order.services.js",
+              "to": "src/services/order.service.js"
+            },
+            {
+              "from": "providers/provider.interface.js",
+              "to": "src/payment/providers/provider.interface.js"
+            },
+            {
+              "from": "providers/provider.js",
+              "to": "src/payment/providers/provider.js"
+            },
+            {
+              "from": "providers/razorpay.provider.js",
+              "to": "src/payment/providers/razorpay.provider.js"
+            }
+          ],
+          "integrations": [
+            {
+              "file": "src/routes/index.routes.js",
+              "operation": "add-import",
+              "source": "./order.routes.js",
+              "specifiers": [
+                {
+                  "kind": "default",
+                  "local": "orderRouter"
+                }
+              ]
+            },
+            {
+              "file": "src/routes/index.routes.js",
+              "operation": "insert-before-call",
+              "callee": "router.use",
+              "statements": [
+                "router.use(\"/orders\", orderRouter);"
+              ]
+            },
+            {
+              "file": "src/config/env.js",
+              "operation": "add-object-properties",
+              "object": "env",
+              "properties": [
+                {
+                  "key": "PAYMENT_PROVIDER",
+                  "value": "process.env.PAYMENT_PROVIDER"
+                },
+                {
+                  "key": "RAZORPAY_KEY_ID",
+                  "value": "paymentProvider === \"razorpay\" ? required(\"RAZORPAY_KEY_ID\") : process.env.RAZORPAY_KEY_ID"
+                },
+                {
+                  "key": "RAZORPAY_KEY_SECRET",
+                  "value": "paymentProvider === \"razorpay\" ? required(\"RAZORPAY_KEY_SECRET\") : process.env.RAZORPAY_KEY_SECRET"
+                }
+              ]
+            },
+            {
+              "file": ".env.example",
+              "operation": "merge-env",
+              "entries": {
+                "PAYMENT_PROVIDER": "razorpay",
+                "RAZORPAY_KEY_ID": "YOUR_RAZORPAY_KEY_ID",
+                "RAZORPAY_KEY_SECRET": "YOUR_RAZORPAY_KEY_SECRET"
+              }
+            }
+          ]
+        },
+        "stripe": {
+          "name": "Stripe",
+          "implemented": false
+        }
+      }
+    },
+    "emailNotifications": {
+      "name": "Email Notifications",
+      "implemented": true,
+      "providers": {
+        "smtp": {
+          "name": "SMTP (Nodemailer)",
+          "implemented": true,
+          "dependencies": {
+            "npm": {
+              "nodemailer": "^9.0.5"
+            }
+          },
+          "files": [
+            {
+              "from": "providers/provider.interface.js",
+              "to": "src/notifications/email/providers/provider.interface.js"
+            },
+            {
+              "from": "providers/provider.js",
+              "to": "src/notifications/email/providers/provider.js"
+            },
+            {
+              "from": "providers/smtp.provider.js",
+              "to": "src/notifications/email/providers/smtp.provider.js"
+            },
+            {
+              "from": "templates",
+              "to": "src/notifications/email/templates"
+            },
+            {
+              "from": "services/emailVerification.service.js",
+              "to": "src/services/emailVerification.service.js"
+            },
+            {
+              "from": "controllers/emailVerification.controller.js",
+              "to": "src/controllers/emailVerification.controller.js"
+            },
+            {
+              "from": "routes/emailVerification.routes.js",
+              "to": "src/routes/emailVerification.routes.js"
+            }
+          ],
+          "integrations": [
+            {
+              "file": "src/routes/index.routes.js",
+              "operation": "add-import",
+              "source": "./emailVerification.routes.js",
+              "specifiers": [
+                {
+                  "kind": "default",
+                  "local": "emailVerificationRouter"
+                }
+              ]
+            },
+            {
+              "file": "src/routes/index.routes.js",
+              "operation": "insert-before-call",
+              "callee": "router.use",
+              "statements": [
+                "router.use(\"/auth\", emailVerificationRouter);"
+              ]
+            },
+            {
+              "file": "src/config/env.js",
+              "operation": "add-object-properties",
+              "object": "env",
+              "properties": [
+                {
+                  "key": "NOTIFICATION_PROVIDER",
+                  "value": "process.env.NOTIFICATION_PROVIDER ?? \"smtp\""
+                },
+                {
+                  "key": "SMTP_HOST",
+                  "value": "process.env.SMTP_HOST ?? \"localhost\""
+                },
+                {
+                  "key": "SMTP_PORT",
+                  "value": "Number(process.env.SMTP_PORT ?? 25)"
+                },
+                {
+                  "key": "SMTP_SECURE",
+                  "value": "process.env.SMTP_SECURE ?? \"false\""
+                },
+                {
+                  "key": "SMTP_USER",
+                  "value": "process.env.SMTP_USER"
+                },
+                {
+                  "key": "SMTP_PASSWORD",
+                  "value": "process.env.SMTP_PASSWORD"
+                },
+                {
+                  "key": "MAIL_FROM",
+                  "value": "process.env.MAIL_FROM ?? \"noreply@nodestarter.local\""
+                }
+              ]
+            },
+            {
+              "file": ".env.example",
+              "operation": "merge-env",
+              "entries": {
+                "NOTIFICATION_PROVIDER": "smtp",
+                "SMTP_HOST": "localhost",
+                "SMTP_PORT": "25",
+                "SMTP_SECURE": "false",
+                "SMTP_USER": "",
+                "SMTP_PASSWORD": "",
+                "MAIL_FROM": "noreply@nodestarter.local"
+              }
+            }
+          ]
+        },
+        "resend": {
+          "name": "Resend",
+          "implemented": true,
+          "dependencies": {
+            "npm": {
+              "resend": "^6.20.0"
+            }
+          },
+          "files": [
+            {
+              "from": "providers/provider.interface.js",
+              "to": "src/notifications/email/providers/provider.interface.js"
+            },
+            {
+              "from": "providers/provider.js",
+              "to": "src/notifications/email/providers/provider.js"
+            },
+            {
+              "from": "providers/resend.provider.js",
+              "to": "src/notifications/email/providers/resend.provider.js"
+            },
+            {
+              "from": "templates",
+              "to": "src/notifications/email/templates"
+            },
+            {
+              "from": "services/emailVerification.service.js",
+              "to": "src/services/emailVerification.service.js"
+            },
+            {
+              "from": "controllers/emailVerification.controller.js",
+              "to": "src/controllers/emailVerification.controller.js"
+            },
+            {
+              "from": "routes/emailVerification.routes.js",
+              "to": "src/routes/emailVerification.routes.js"
+            }
+          ],
+          "integrations": [
+            {
+              "file": "src/routes/index.routes.js",
+              "operation": "add-import",
+              "source": "./emailVerification.routes.js",
+              "specifiers": [
+                {
+                  "kind": "default",
+                  "local": "emailVerificationRouter"
+                }
+              ]
+            },
+            {
+              "file": "src/routes/index.routes.js",
+              "operation": "insert-before-call",
+              "callee": "router.use",
+              "statements": [
+                "router.use(\"/auth\", emailVerificationRouter);"
+              ]
+            },
+            {
+              "file": "src/config/env.js",
+              "operation": "add-object-properties",
+              "object": "env",
+              "properties": [
+                {
+                  "key": "NOTIFICATION_PROVIDER",
+                  "value": "process.env.NOTIFICATION_PROVIDER ?? \"resend\""
+                },
+                {
+                  "key": "MAIL_FROM",
+                  "value": "process.env.MAIL_FROM ?? \"onboarding@resend.dev\""
+                },
+                {
+                  "key": "RESEND_API_KEY",
+                  "value": "process.env.RESEND_API_KEY"
+                }
+              ]
+            },
+            {
+              "file": ".env.example",
+              "operation": "merge-env",
+              "entries": {
+                "NOTIFICATION_PROVIDER": "resend",
+                "MAIL_FROM": "onboarding@resend.dev",
+                "RESEND_API_KEY": "YOUR_RESEND_API_KEY"
+              }
+            }
+          ]
+        }
+      }
     }
   }
 }

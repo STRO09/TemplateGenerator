@@ -20,23 +20,23 @@ import multer from "multer";
 import uploadConfig from "../config/upload.config.js";
 
 const fileFilter = (req, file, callback) => {
-  const allowed = uploadConfig.allowedMimeTypes.includes(file.mimetype);
+    const allowed = uploadConfig.allowedMimeTypes.includes(file.mimetype);
 
-  if (!allowed) {
-    return callback(new Error("Unsupported file type."));
-  }
+    if (!allowed) {
+        return callback(new Error("Unsupported file type."));
+    }
 
-  callback(null, true);
+    callback(null, true);
 };
 
 const upload = multer({
-  storage: multer.memoryStorage(),
+    storage: multer.memoryStorage(),
 
-  limits: {
-    fileSize: uploadConfig.maxFileSize,
-  },
+    limits: {
+        fileSize: uploadConfig.maxFileSize,
+    },
 
-  fileFilter,
+    fileFilter,
 });
 
 export default upload;

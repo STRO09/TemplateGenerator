@@ -45,21 +45,56 @@ export async function integrateSelectedModules({
 
   try {
     if (hasSelectedModules) {
-      copySelectedModuleFiles({
-        targetPath,
-        stackRoot,
-        selectedModules,
-        moduleRegistry,
-      });
+      const moduleErrors = [];
+      const failedModuleKeys = new Set();
 
-      applySelectedModuleIntegrations({
-        targetPath,
-        moduleRegistry,
-        selectedModules,
-      });
+      for (const [moduleKey, selection] of Object.entries(selectedModules)) {
+        try {
+          copySelectedModuleFiles({
+            targetPath,
+            stackRoot,
+            selectedModules: { [moduleKey]: selection },
+            moduleRegistry,
+          });
+
+          applySelectedModuleIntegrations({
+            targetPath,
+            moduleRegistry,
+            selectedModules: { [moduleKey]: selection },
+          });
+        } catch (error) {
+          console.error(
+            `\nWarning: Module "${moduleKey}" integration failed and was skipped: ${error.message}`,
+          );
+          moduleErrors.push(error);
+          failedModuleKeys.add(moduleKey);
+        }
+      }
+
+      // Strip failed modules so project.json only records what was actually applied.
+      if (failedModuleKeys.size > 0 && metadata?.modules?.server) {
+        metadata = {
+          ...metadata,
+          modules: {
+            ...metadata.modules,
+            server: Object.fromEntries(
+              Object.entries(metadata.modules.server).filter(
+                ([key]) => !failedModuleKeys.has(key),
+              ),
+            ),
+          },
+        };
+      }
+
+      if (moduleErrors.length > 0) {
+        integrationError =
+          moduleErrors.length === 1
+            ? moduleErrors[0]
+            : new AggregateError(moduleErrors, "One or more module integrations failed.");
+      }
     }
 
-    // Save metadata at the main project root, not inside the server app.
+    // Save metadata at the main project root even when some modules failed.
     saveProjectMetadata(metadataPath, metadata);
   } catch (error) {
     integrationError = error;

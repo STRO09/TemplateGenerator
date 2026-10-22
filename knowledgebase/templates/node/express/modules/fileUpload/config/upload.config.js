@@ -17,16 +17,16 @@
 import path from "path";
 
 export default {
-  destination: path.resolve("src/fileUploads/storage"),
+    destination: path.resolve("src/fileUploads/storage"),
 
-  maxFileSize: 5 * 1024 * 1024,
+    maxFileSize: 5 * 1024 * 1024,
 
-  filenameSeparator: "-",
+    filenameSeparator: "-",
 
-  allowedMimeTypes: [
-    "image/jpeg",
-    "image/png",
-    "image/webp",
-    "application/pdf",
-  ],
+    allowedMimeTypes: [
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+        "application/pdf",
+    ],
 };
